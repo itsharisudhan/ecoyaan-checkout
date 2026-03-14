@@ -2,7 +2,7 @@
 
 A simplified checkout experience for an eco-friendly e-commerce platform, built with **Next.js 16** (App Router), **React 19**, and **Tailwind CSS v4**.
 
-> **Live Demo:** _[Add your Vercel URL here after deployment]_
+> **Live Demo:** [https://ecoyaan-checkout-two-chi.vercel.app](https://ecoyaan-checkout-two-chi.vercel.app)
 
 ---
 
