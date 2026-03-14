@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🌿 Ecoyaan Checkout Flow
 
-## Getting Started
+A simplified checkout experience for an eco-friendly e-commerce platform, built with **Next.js 16** (App Router), **React 19**, and **Tailwind CSS v4**.
 
-First, run the development server:
+> **Live Demo:** _[Add your Vercel URL here after deployment]_
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## ✨ Features
+
+- **3-Step Checkout Flow** — Cart → Shipping Address → Payment Confirmation
+- **Server-Side Rendering** — Cart data fetched from a Next.js API Route during SSR
+- **Context API State Management** — Shared state across all steps without prop drilling
+- **Real-time Form Validation** — Inline errors for email, phone (10-digit), PIN code (6-digit)
+- **Quantity Adjustment** — Increase/decrease item quantities directly in the cart
+- **Back Navigation** — Users can return to previous steps to edit information
+- **Responsive Design** — Mobile-first layout that adapts to all screen sizes
+- **Animated Step Progress Bar** — Visual indicator showing completed, active, and upcoming steps
+
+---
+
+## 🏗️ Architecture
+
+### Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| **Next.js 16** (App Router) | Framework with SSR, API Routes, file-based routing |
+| **React 19** | UI component library |
+| **Tailwind CSS v4** | Utility-first responsive styling |
+| **Context API** | Cross-component state management |
+
+### Project Structure
+
+```
+app/
+├── api/cart/
+│   └── route.js            # Mock API endpoint (GET /api/cart)
+├── components/
+│   ├── CartSummary.js       # Step 1: Cart review + quantity controls
+│   ├── AddressForm.js       # Step 2: Shipping form + validation
+│   ├── OrderConfirmation.js # Step 3: Review + "Pay Securely" + Success
+│   └── Providers.js         # Client wrapper for Context Provider
+├── context/
+│   └── CartContext.js       # Context API: state + actions + custom hook
+├── CheckoutClient.js        # Main orchestrator: step indicator + routing
+├── page.js                  # Server Component: SSR data fetching
+├── layout.js                # Root layout: fonts, metadata, global CSS
+└── globals.css              # Tailwind imports + custom animations
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Design Decisions
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+**Why Context API over Redux/Zustand?**
+For a 3-step checkout with limited shared state (cart items + address), Context API provides the right balance of simplicity and capability. Redux would be over-engineering for this scope.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Why API Routes over direct file reading?**
+The Server Component fetches from `/api/cart` instead of using `fs.readFileSync`. This demonstrates a real API integration pattern — in production, you'd simply swap the URL to your actual backend.
 
-## Learn More
+**Why component separation?**
+Each step is its own component (`CartSummary`, `AddressForm`, `OrderConfirmation`). This makes the codebase modular, testable, and easy to extend.
 
-To learn more about Next.js, take a look at the following resources:
+### Data Flow
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+                        SERVER                              BROWSER
+┌─────────────────────────────────────┐    ┌─────────────────────────────┐
+│  page.js (Server Component)        │    │  CheckoutClient.js          │
+│  ↓                                 │    │  ├── CartProvider (Context)  │
+│  fetch('/api/cart')                 │──→ │  ├── StepIndicator          │
+│  ↓                                 │    │  └── CartSummary             │
+│  route.js returns JSON mock data   │    │      AddressForm             │
+│                                    │    │      OrderConfirmation       │
+└─────────────────────────────────────┘    └─────────────────────────────┘
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🚀 Getting Started
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Prerequisites
+- **Node.js** v18+ installed
+- **npm** (comes with Node.js)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Run Locally
+
+```bash
+# 1. Clone the repository
+git clone <your-repo-url>
+cd ecoyaan-checkout
+
+# 2. Install dependencies
+npm install
+
+# 3. Start the development server
+npm run dev
+
+# 4. Open in browser
+#    → http://localhost:3000
+```
+
+### Build for Production
+
+```bash
+npm run build
+npm start
+```
+
+---
+
+## 🧪 Testing the Flow
+
+1. **Cart Screen** — View 2 eco-friendly products, adjust quantities with +/- buttons, verify price calculations
+2. **Address Form** — Test validation by submitting empty/invalid data, then fill correctly
+3. **Payment Screen** — Review order + address, click "Pay Securely" to see the success animation
+4. **Responsive** — Resize browser or use DevTools mobile view to test responsive layout
+
+---
+
+## 📦 Deployment
+
+Deploy to [Vercel](https://vercel.com) (recommended for Next.js):
+
+```bash
+npx vercel
+```
+
+Or connect your GitHub repo to Vercel for automatic deployments on push.
