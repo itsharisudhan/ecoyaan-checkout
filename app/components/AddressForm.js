@@ -57,16 +57,21 @@ const AddressForm = forwardRef(function AddressForm(_props, ref) {
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
 
-    // Expose a submit trigger to the parent (for the sticky bar)
+    // Expose a submit trigger to the parent (for the sticky bar "Continue" button)
     useImperativeHandle(ref, () => ({
         requestSubmit: () => {
-            // If user has selected a saved address (and form is hidden), proceed directly
+            // If a saved address is selected and form is hidden → proceed
             if (!showForm && selectedAddressId) {
                 goNext();
                 return;
             }
-            // Otherwise validate & submit the form
-            handleSubmit();
+            // If form is showing, validate → save → proceed
+            if (showForm) {
+                handleSubmitAndProceed();
+                return;
+            }
+            // No address selected at all
+            alert('Please add or select an address to continue.');
         },
     }));
 
@@ -83,9 +88,8 @@ const AddressForm = forwardRef(function AddressForm(_props, ref) {
         setErrors((prev) => ({ ...prev, [fieldName]: error }));
     };
 
-    const handleSubmit = (e) => {
-        if (e) e.preventDefault();
-
+    // Validate the form and return true if valid
+    const validateForm = () => {
         const newErrors = {};
         let hasErrors = false;
 
@@ -101,8 +105,24 @@ const AddressForm = forwardRef(function AddressForm(_props, ref) {
             allTouched[fieldName] = true;
         });
         setTouched(allTouched);
+        return !hasErrors;
+    };
 
-        if (!hasErrors) {
+    // Save address and stay on the page (user can add more)
+    const handleSaveAddress = (e) => {
+        if (e) e.preventDefault();
+        if (validateForm()) {
+            addAddress(formData);
+            setFormData(initialFormData);
+            setTouched({});
+            setErrors({});
+            setShowForm(false);
+        }
+    };
+
+    // Save address and proceed (triggered by sticky bar)
+    const handleSubmitAndProceed = () => {
+        if (validateForm()) {
             addAddress(formData);
             setFormData(initialFormData);
             setTouched({});
@@ -219,7 +239,7 @@ const AddressForm = forwardRef(function AddressForm(_props, ref) {
 
                 {/* ─── Address Form ─── */}
                 {showForm && (
-                    <form onSubmit={handleSubmit} id="address-form">
+                    <form onSubmit={handleSaveAddress} id="address-form">
                         {savedAddresses.length > 0 && (
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
@@ -276,6 +296,17 @@ const AddressForm = forwardRef(function AddressForm(_props, ref) {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Save Address button — stays on the page so user can add more */}
+                        <button
+                            type="submit"
+                            className="mt-5 w-full py-3 rounded-xl bg-green-50 border-2 border-green-200
+                                       text-green-700 font-semibold text-sm
+                                       hover:bg-green-100 hover:border-green-300
+                                       transition-all duration-200 flex items-center justify-center gap-2"
+                        >
+                            ✓ Save Address
+                        </button>
                     </form>
                 )}
 
