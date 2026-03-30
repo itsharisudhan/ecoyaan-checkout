@@ -25,11 +25,11 @@ body {
   font-family: var(--font-sans, 'Inter', Arial, Helvetica, sans-serif);
 }
 
-/* Smooth transitions for step changes */
-@keyframes fadeIn {
+/* ───── Step card fade-in ───── */
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -37,29 +37,90 @@ body {
   }
 }
 
-@keyframes scaleIn {
+.animate-fade-in-up {
+  animation: fadeInUp 0.35s ease-out both;
+}
+
+/* ───── Sticky bar slide-up ───── */
+@keyframes slideUp {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: translateY(100%);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
   }
 }
 
-/* Apply fade-in to main content cards */
-.bg-white {
-  animation: fadeIn 0.3s ease-out;
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out both;
 }
 
-/* Success animation */
-.animate-bounce {
-  animation: bounce 0.6s ease-in-out;
-}
-
-@keyframes bounce {
+/* ───── Scale bounce for success ───── */
+@keyframes scaleBounce {
   0% { transform: scale(0); opacity: 0; }
-  50% { transform: scale(1.2); }
+  60% { transform: scale(1.15); }
   100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-scale-bounce {
+  animation: scaleBounce 0.5s ease-out both;
+}
+
+/* ───── Subtle pulse ring ───── */
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+
+.animate-pulse-ring {
+  animation: pulseRing 2s ease-in-out infinite;
+}
+
+/* ───── Card hover glow ───── */
+.card-glow {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.card-glow:hover {
+  box-shadow: 0 4px 24px -4px rgba(22, 163, 74, 0.12);
+  border-color: rgba(22, 163, 74, 0.25);
+}
+
+/* ───── Glassmorphism helper ───── */
+.glass {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ───── Safe-area (mobile notch / home-bar) ───── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* ───── Custom scrollbar (keeps it subtle) ───── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ───── Radio dot animation ───── */
+@keyframes dotScale {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+.animate-dot-scale {
+  animation: dotScale 0.2s ease-out both;
 }
